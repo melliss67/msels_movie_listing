@@ -51,13 +51,17 @@ listing_page_html = """
 
 movie_html = """
 <h1>{title}</h1>
-<div>released: {year}</div>
-<div class="small">{plot}</div>
+<div>Year: {year}</div>
+<div class="small">Plot:{plot}</div>
 """
 
 
 def get_movie_dirs(top_dir):
-    return next(os.walk(top_dir))[1]
+    try:
+        return next(os.walk(top_dir))[1]
+    except:
+        print('error finding directories')
+        return []
 
 
 def parse_movie_title(movie_dir):
@@ -99,29 +103,30 @@ top_dir = input('top directory: ')
 print('searching for movies in "' + top_dir + '"')
 
 movie_names = get_movie_dirs(top_dir)
-content = ''
+if len(movie_names) > 0:
+    content = ''
 
-for cur_dir in movie_names:
-    search = parse_movie_title(cur_dir)
-    # will need to add api lookup here
-    search_query = urllib.parse.urlencode(search)
-    api_url = "http://www.omdbapi.com/?apikey=7a6c480b&{}&plot=full".\
-            format(search_query)
-    # print(api_url)
-    movie = get_movie_info(api_url)
-    if get_key_value(movie,'Response') == 'False':
-        print('Movie titled {} not found.'.format(cur_dir))
-    else:
-        print('Adding {}.'.format(search['t']))
-        year = get_key_value(movie, 'Year')
-        plot = get_key_value(movie, 'Plot')
-        movie_info = {'title': search['t'], 'year': year, 'plot': plot}
-        content = content + movie_html.format_map(movie_info)
+    for cur_dir in movie_names:
+        search = parse_movie_title(cur_dir)
+        # will need to add api lookup here
+        search_query = urllib.parse.urlencode(search)
+        api_url = "http://www.omdbapi.com/?apikey=7a6c480b&{}&plot=full".\
+                format(search_query)
+        # print(api_url)
+        movie = get_movie_info(api_url)
+        if get_key_value(movie,'Response') == 'False':
+            print('Movie titled {} not found.'.format(cur_dir))
+        else:
+            print('Adding {}.'.format(search['t']))
+            year = get_key_value(movie, 'Year')
+            plot = get_key_value(movie, 'Plot')
+            movie_info = {'title': search['t'], 'year': year, 'plot': plot}
+            content = content + movie_html.format_map(movie_info)
 
-result = listing_page_html.format(content)
-html_file = top_dir + os.sep + 'movies.htm'
-write_file(html_file,result)
-webbrowser.open('file:\\{}'.format(html_file))
+    result = listing_page_html.format(content)
+    html_file = top_dir + os.sep + 'movies.htm'
+    write_file(html_file,result)
+    webbrowser.open('file:\\{}'.format(html_file))
 
 
 #OTHER INFORMATION
