@@ -1,5 +1,6 @@
 import os
 import json
+import webbrowser
 
 import urllib.parse
 import urllib.request
@@ -86,7 +87,12 @@ def get_movie_info(url):
     response = urllib.request.urlopen(url).read().decode('utf8')
     obj = json.loads(response)
     return obj
-    
+
+
+def write_file(html_file, html):
+    f = open(html_file, 'w')
+    f.write(html)
+    f.close()
 
 
 top_dir = input('top directory: ')
@@ -113,7 +119,10 @@ for cur_dir in movie_names:
         content = content + movie_html.format_map(movie_info)
 
 result = listing_page_html.format(content)
-print(result)
+html_file = top_dir + os.sep + 'movies.htm'
+write_file(html_file,result)
+webbrowser.open('file:\\{}'.format(html_file))
+
 
 #OTHER INFORMATION
 
