@@ -36,13 +36,13 @@ listing_page_html = """
     text-align: center;
     padding: 4px;
     font-size: 1.6em;
+    display: inline;
   }}
   div
   {{
     border: 1px solid #003A21;
     padding: 4px;
     background-color: #FFFFFF;
-    white-space: nowrap;
   }}
   .small
   {{
@@ -95,6 +95,7 @@ movie_html = """
 <div>IMDB Rating: {imdbRating}</div>
 <div>IMDB Votes: {imdbVotes}</div>
 <div class="small"><p>Plot:{plot}</p></div>
+<br>
 """
 
 
