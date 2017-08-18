@@ -22,6 +22,11 @@ listing_page_html = """
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.2em;
   }}
+  img
+  {{
+    float: right;
+    margin: 0 0 10px 10px;
+  }}
   h1
   {{
     background-color: #0F5738;
@@ -40,6 +45,29 @@ listing_page_html = """
   {{
     font-size: .8em;
   }}
+  a.heading:link
+  {{
+    color: #FFFFFF;
+  }}
+  a.heading:visited
+  {{
+    color: #FFFFFF;
+  }}
+  a.heading:hover
+  {{
+    color: #A8F0D1;
+    font-weight: bold;
+  }}
+  a.heading:focus
+  {{
+    color: #A8F0D1;
+    font-weight: bold;
+  }}
+  a.heading:active
+  {{
+    color: #A8F0D1;
+    font-weight: bold;
+  }}
   </style>
 </head>
 <body>
@@ -50,9 +78,11 @@ listing_page_html = """
 
 
 movie_html = """
-<h1>{title}</h1>
-<div>Year: {year}</div>
-<div class="small">Plot:{plot}</div>
+<h1><a href="http://www.imdb.com/title/{imdbID}/" class="heading" target="_blank">{title}</a></h1>
+<div><p><a href="http://www.imdb.com/title/{imdbID}/" target="_blank"><img src="{poster}" alt="poster" width="100"></a>Year:{year}</p></div>
+<div>Runtime: {runtime}</div>
+<div>Metascore: {metascore}</div>
+<div class="small"><p>Plot:{plot}</p></div>
 """
 
 
@@ -108,19 +138,24 @@ if len(movie_names) > 0:
 
     for cur_dir in movie_names:
         search = parse_movie_title(cur_dir)
-        # will need to add api lookup here
         search_query = urllib.parse.urlencode(search)
         api_url = "http://www.omdbapi.com/?apikey=7a6c480b&{}&plot=full".\
                 format(search_query)
-        # print(api_url)
+
         movie = get_movie_info(api_url)
         if get_key_value(movie,'Response') == 'False':
             print('Movie titled {} not found.'.format(cur_dir))
         else:
             print('Adding {}.'.format(search['t']))
             year = get_key_value(movie, 'Year')
+            runtime = get_key_value(movie, 'Runtime')
+            metascore = get_key_value(movie, 'Metascore')
             plot = get_key_value(movie, 'Plot')
-            movie_info = {'title': search['t'], 'year': year, 'plot': plot}
+            poster = get_key_value(movie, 'Poster')
+            imdbID = get_key_value(movie, 'imdbID')
+            movie_info = {'title': search['t'], 'year': year, 'plot': plot,
+                          'poster': poster, 'runtime': runtime,
+                          'metascore': metascore, 'imdbID': imdbID}
             content = content + movie_html.format_map(movie_info)
 
     result = listing_page_html.format(content)
@@ -138,5 +173,6 @@ if len(movie_names) > 0:
 
 # sample url
 # http://www.omdbapi.com/?apikey=7a6c480b&t=office+space&y=1999&plot=full
+
 
 
