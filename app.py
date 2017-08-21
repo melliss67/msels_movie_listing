@@ -149,7 +149,7 @@ movie_names = get_movie_dirs(top_dir)
 if len(movie_names) > 0:
     content = ''
 
-    for cur_dir in movie_names:
+    for cur_dir in sorted(movie_names):
         search = parse_movie_title(cur_dir)
         search_query = urllib.parse.urlencode(search)
         api_url = "http://www.omdbapi.com/?apikey=" + api_key + "&{}&plot=full".\
